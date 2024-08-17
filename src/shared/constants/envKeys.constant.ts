@@ -20,7 +20,7 @@ export const ENV_KEYS: IEnvKeys = {
   JWT_EXPIRATION: process.env.JWT_EXPIRATION || '24h',
   JWT_REFRESH_EXPIRATION: process.env.JWT_REFRESH_EXPIRATION || '24h',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'secret',
-  URI_DATABASE: process.env.URI_DATABASE,
+  URI_DATABASE: process.env.URI_DATABASE as string,
   DB_TYPE: process.env.DB_TYPE as DatabaseType,
 };
 

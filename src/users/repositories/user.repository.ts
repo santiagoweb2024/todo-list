@@ -4,11 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 
-export interface IUserRepository {
+export interface IAuthRepository {
   create(user: CreateUserDto): Promise<User>;
+  findByEmail(email: string): Promise<User | null>;
 }
 @Injectable()
-export class UserRepository implements IUserRepository {
+export class AuthRepository implements IAuthRepository {
   constructor(
     @InjectRepository(User)
     private readonly user: Repository<User>,
@@ -22,5 +23,10 @@ export class UserRepository implements IUserRepository {
     });
 
     return this.user.save(newUser);
+  }
+
+  findByEmail(email: string): Promise<User | null> {
+    const user = this.user.findOne({ where: { email } });
+    return user;
   }
 }
