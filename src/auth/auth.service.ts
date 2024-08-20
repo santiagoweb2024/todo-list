@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { config } from 'src/shared/constants/envKeys.constant';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,10 @@ export class AuthService {
 
       const verificationtoken = this.jwtService.sign(
         { email: user.email },
-        { expiresIn: '1h' },
+        {
+          secret: config.jwt.secretVerification,
+          expiresIn: config.jwt.expirationVerification,
+        },
       ); // * Genera un token de verificación JWT válido por 1 hora
 
       await this.mailService.sendEmail(
@@ -61,6 +65,21 @@ export class AuthService {
     }
   }
 
+  async verifyAccount(token: string) {
+    const payload = this.jwtService.verify(token, {
+      secret: config.jwt.secretVerification,
+    }); // * Verifica el token JWT y extrae los datos del payload
+    const user = await this.authRepository.findByEmail(payload.email); // * Busca un usuario por su email usando el payload del JWT
+    if (!user) {
+      throw new Error('User not found'); // ! Lanza una excepción si el usuario no existe
+    }
+    if (user.isVerified) {
+      throw new Error('User already verified'); // ! Lanza una excepción si el usuario ya ha sido verificado
+    }
+    user.isVerified = true; // * Marca el usuario como verificado
+    const updatedUser = await this.authRepository.update(user.userId, user); // * Actualiza los cambios en la base de datos
+    return updatedUser; // * Retorna el usuario verificado
+  }
   async validateUser({ email, password }: LoginDto) {
     const user = await this.authRepository.findByEmail(email); // * Busca un usuario por su email en la base de datos
     if (!user) {

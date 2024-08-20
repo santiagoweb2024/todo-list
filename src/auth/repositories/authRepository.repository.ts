@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { RegisterDto } from '../dto/register.dto';
 export interface IAuthRepository {
   findByEmail(email: string): Promise<User | null>;
   create(user: RegisterDto): Promise<User>;
+  update(userId: number, updateData: Partial<User>): Promise<UpdateResult>;
 }
 
 @Injectable()
@@ -24,5 +25,9 @@ export class AuthRepository implements IAuthRepository {
       passwordHash: user.password,
     });
     return this.user.save(newUser);
+  }
+  update(userId: number, updateData: Partial<User>): Promise<UpdateResult> {
+    const user = this.user.update({ userId }, updateData);
+    return user;
   }
 }

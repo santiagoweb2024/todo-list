@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'; // **Importa el decorador Injectable de NestJS para definir el servicio**
 import { Resend } from 'resend'; // **Importa la clase Resend para enviar correos electrónicos usando el servicio Resend**
+import { config } from 'src/shared/constants/envKeys.constant';
 
 /**
  * **MailService** es un servicio que utiliza la API de Resend para enviar correos electrónicos.
@@ -15,7 +16,7 @@ export class MailService {
    */
   constructor() {
     // **Inicializa la instancia de Resend con la clave API almacenada en las variables de entorno**
-    this.resend = new Resend(process.env.RESEND_API_KEY);
+    this.resend = new Resend(config.resendApiKey);
   }
 
   /**

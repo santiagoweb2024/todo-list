@@ -30,3 +30,29 @@ export const DATABASE_CONFIG = {
     url: ENV_KEYS.URI_DATABASE,
   },
 };
+
+export enum EnvVariables {
+  DB_TYPE = 'DB_TYPE',
+  URI_DATABASE = 'URI_DATABASE',
+  JWT_SECRET_VERIFICATION_ACCOUNT = 'JWT_SECRET_VERIFICATION_ACCOUNT',
+  JWT_SECRET_AUTHENTICATION = 'JWT_SECRET_AUTHENTICATION',
+  JWT_EXPIRATION_VERIFICATION_ACCOUNT = 'JWT_EXPIRATION_VERIFICATION_ACCOUNT',
+  JWT_EXPIRATION_AUTHENTICATION = 'JWT_EXPIRATION_AUTHENTICATION',
+  RESEND_API_KEY = 'RESEND_API_KEY',
+}
+
+export const config = {
+  database: {
+    type: process.env[EnvVariables.DB_TYPE],
+    uri: process.env[EnvVariables.URI_DATABASE],
+  },
+  jwt: {
+    secretVerification:
+      process.env[EnvVariables.JWT_SECRET_VERIFICATION_ACCOUNT],
+    secretAuth: process.env[EnvVariables.JWT_SECRET_AUTHENTICATION],
+    expirationVerification:
+      process.env[EnvVariables.JWT_EXPIRATION_VERIFICATION_ACCOUNT],
+    expirationAuth: process.env[EnvVariables.JWT_EXPIRATION_AUTHENTICATION],
+  },
+  resendApiKey: process.env[EnvVariables.RESEND_API_KEY],
+};

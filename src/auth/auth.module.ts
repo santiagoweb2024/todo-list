@@ -9,6 +9,7 @@ import { LocalStrategy } from './strategies/localStrategy.strategy'; // **Import
 import { PassportModule } from '@nestjs/passport'; // **Importa PassportModule para la integración con Passport**
 import { JwtModule } from '@nestjs/jwt'; // **Importa JwtModule para la gestión de JWT**
 import { JwtStrategy } from './strategies/jwtStrategy.strategy'; // **Importa la estrategia JwtStrategy para la autenticación JWT**
+import { config } from 'src/shared/constants/envKeys.constant';
 
 /**
  * **AuthModule** define el módulo para la autenticación.
@@ -28,8 +29,8 @@ import { JwtStrategy } from './strategies/jwtStrategy.strategy'; // **Importa la
     TypeOrmModule.forFeature([User]), // **Configura TypeORM para trabajar con la entidad User en este módulo**
     PassportModule, // **Módulo de Passport para la integración con estrategias de autenticación**
     JwtModule.register({
-      secret: 'secret', // **Clave secreta utilizada para firmar los JWT**
-      signOptions: { expiresIn: '1d' }, // **Opciones de firma del JWT, incluyendo el tiempo de expiración del token (1 día)**
+      secret: config.jwt.secretAuth, // **Clave secreta utilizada para firmar los JWT**
+      signOptions: { expiresIn: config.jwt.expirationAuth }, // **Opciones de firma del JWT, incluyendo el tiempo de expiración del token (1 día)**
     }),
   ],
   // **Controladores de este módulo**: Controladores que manejan las solicitudes HTTP.
