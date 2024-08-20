@@ -17,7 +17,7 @@ export class ExeptionFilterAll implements ExceptionFilter {
       exception instanceof HttpException &&
       exception.name === 'ValidationException'
     ) {
-      console.log('esty en HttpException:', { ...exception });
+      console.log('esty en HttpException1:', { ...exception });
       const status = exception.getStatus();
       return response.status(status).json({
         statusCode: response.statusCode,
@@ -27,7 +27,19 @@ export class ExeptionFilterAll implements ExceptionFilter {
         errors: exception.getResponse(),
       });
     }
-
+    if (
+      exception instanceof HttpException &&
+      exception.name === 'UnauthorizedException'
+    ) {
+      console.log('esty en HttpException2:', exception);
+      const status = exception.getStatus();
+      return response.status(status).json({
+        statusCode: response.statusCode,
+        success: false,
+        message: exception.message,
+        path: request.url,
+      });
+    }
     if (exception instanceof QueryFailedError) {
       console.log('esty en QueryFailedError:', { ...exception });
       return response.status(500).json({
