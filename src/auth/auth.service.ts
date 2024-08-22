@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthRepository } from './repositories/authRepository.repository';
 import { MailService } from 'src/mail/mail.service';
@@ -25,7 +30,7 @@ export class AuthService {
     try {
       const userExists = await this.authRepository.findByEmail(user.email); // TODO: Verifica si el usuario ya existe en la base de datos
       if (userExists) {
-        throw new Error('User already exists'); // ! Lanza un error si el usuario ya existe
+        throw new ConflictException('User already verified'); // ! Lanza un error si el usuario ya existe
       }
 
       const verificationtoken = this.jwtService.sign(
@@ -71,10 +76,10 @@ export class AuthService {
     }); // * Verifica el token JWT y extrae los datos del payload
     const user = await this.authRepository.findByEmail(payload.email); // * Busca un usuario por su email usando el payload del JWT
     if (!user) {
-      throw new Error('User not found'); // ! Lanza una excepción si el usuario no existe
+      throw new NotFoundException('User not found'); // ! Lanza una excepción si el usuario no existe
     }
     if (user.isVerified) {
-      throw new Error('User already verified'); // ! Lanza una excepción si el usuario ya ha sido verificado
+      throw new ConflictException('User already verified'); // ! Lanza una excepción si el usuario ya ha sido verificado
     }
     user.isVerified = true; // * Marca el usuario como verificado
     const updatedUser = await this.authRepository.update(user.userId, user); // * Actualiza los cambios en la base de datos
@@ -104,6 +109,41 @@ export class AuthService {
     const payload = { email: user.email, sub: user.userId }; // * Crea un payload con el email y el ID del usuario
     const token = this.jwtService.sign(payload); // * Genera un token JWT con el payload
     return { message: 'Login successful', token }; // * Devuelve un mensaje de éxito junto con el token
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.authRepository.findByEmail(email); // * Busca un usuario por su email
+    if (!user) {
+      throw new NotFoundException('User not found'); // ! Lanza una excepción si el usuario no existe
+    }
+    const token = this.jwtService.sign(
+      { email },
+      {
+        secret: config.jwt.secretResetPassword,
+        expiresIn: config.jwt.expirationResetPassword,
+      },
+    ); // * Genera un token JWT con el email del usuario
+    const link = `http://localhost:3000/auth/reset-password/${token}`; // * Construye la dirección del enlace de restablecimiento de contraseña
+    await this.mailService.sendEmail(
+      email,
+      'Reset Password',
+      `<a href="${link}">Click here</a> to reset your password`,
+    ); // * Enviará un correo electrónico de restablecimiento de contraseña
+    return { message: 'Email sent' }; // * Devuelve un mensaje de correo electrónico enviado
+  }
+
+  async resetPassword(token: string, password: string) {
+    const payload = this.jwtService.verify(token, {
+      secret: config.jwt.secretResetPassword,
+    }); // * Verifica el token JWT y extrae los datos del payload
+    const user = await this.authRepository.findByEmail(payload.email); // * Busca un usuario por su email usando el payload del JWT
+    if (!user) {
+      throw new NotFoundException('User not found'); // ! Lanza una excepción si el usuario no existe
+    }
+    const hashedPassword = this.hashedPassword(password); // * Hashea la contraseña proporcionada
+    user.passwordHash = hashedPassword; // * Asigna la contraseña hasheada al usuario
+    const updatedUser = await this.authRepository.update(user.userId, user); // * Actualiza los cambios en la base de datos
+    return updatedUser; // * Retorna el usuario actualizado
   }
 
   private hashedPassword(password: string) {

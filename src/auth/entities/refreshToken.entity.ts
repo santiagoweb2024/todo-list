@@ -1,30 +1,22 @@
-import { RefreshToken } from 'src/auth/entities/refreshToken.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class RefreshToken {
   @PrimaryGeneratedColumn('increment')
-  userId!: number;
+  refreshTokenId!: number;
 
   @Column()
-  name!: string;
-
-  @Column({ unique: true })
-  email!: string;
-
-  @Column()
-  passwordHash!: string;
-
-  @Column({ default: false })
-  isVerified!: boolean;
+  refreshTokenHash!: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt!: Date;
@@ -35,6 +27,7 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   deletedAt!: Date;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
-  refreshTokens!: RefreshToken[];
+  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user!: User;
 }

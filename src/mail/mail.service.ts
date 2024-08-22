@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'; // **Importa el decorador Injectable de NestJS para definir el servicio**
+import { Injectable, InternalServerErrorException } from '@nestjs/common'; // **Importa el decorador Injectable de NestJS para definir el servicio**
 import { Resend } from 'resend'; // **Importa la clase Resend para enviar correos electrónicos usando el servicio Resend**
 import { config } from 'src/shared/constants/envKeys.constant';
 
@@ -40,7 +40,7 @@ export class MailService {
     // **Maneja errores si ocurren durante el envío del correo electrónico**
     if (error) {
       console.log(error); // **Imprime el error en la consola para depuración**
-      throw new Error(error.message); // **Lanza una excepción con el mensaje de error**
+      throw new InternalServerErrorException('Failed to send reset email'); // **Lanza una excepción con el mensaje de error**
     }
 
     // **Devuelve los datos de la respuesta del servicio de Resend**

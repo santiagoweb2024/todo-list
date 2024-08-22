@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { RegisterDto } from '../dto/register.dto';
+import { RefreshToken } from '../entities/refreshToken.entity';
 export interface IAuthRepository {
   findByEmail(email: string): Promise<User | null>;
   create(user: RegisterDto): Promise<User>;
@@ -13,6 +14,8 @@ export interface IAuthRepository {
 export class AuthRepository implements IAuthRepository {
   constructor(
     @InjectRepository(User) private readonly user: Repository<User>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshToken: Repository<RefreshToken>,
   ) {}
   findByEmail(email: string): Promise<User | null> {
     const user = this.user.findOne({ where: { email } });

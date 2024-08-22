@@ -36,8 +36,7 @@ export enum EnvVariables {
   URI_DATABASE = 'URI_DATABASE',
   JWT_SECRET_VERIFICATION_ACCOUNT = 'JWT_SECRET_VERIFICATION_ACCOUNT',
   JWT_SECRET_AUTHENTICATION = 'JWT_SECRET_AUTHENTICATION',
-  JWT_EXPIRATION_VERIFICATION_ACCOUNT = 'JWT_EXPIRATION_VERIFICATION_ACCOUNT',
-  JWT_EXPIRATION_AUTHENTICATION = 'JWT_EXPIRATION_AUTHENTICATION',
+  JWT_SECRET_RESET_PASSWORD = 'JWT_SECRET_RESET_PASSWORD',
   RESEND_API_KEY = 'RESEND_API_KEY',
 }
 
@@ -50,9 +49,10 @@ export const config = {
     secretVerification:
       process.env[EnvVariables.JWT_SECRET_VERIFICATION_ACCOUNT],
     secretAuth: process.env[EnvVariables.JWT_SECRET_AUTHENTICATION],
-    expirationVerification:
-      process.env[EnvVariables.JWT_EXPIRATION_VERIFICATION_ACCOUNT],
-    expirationAuth: process.env[EnvVariables.JWT_EXPIRATION_AUTHENTICATION],
+    secretResetPassword: process.env[EnvVariables.JWT_SECRET_RESET_PASSWORD],
+    expirationResetPassword: 3600,
+    expirationVerification: 3600,
+    expirationAuth: 3600,
   },
   resendApiKey: process.env[EnvVariables.RESEND_API_KEY],
 };
