@@ -1,0 +1,23 @@
+export enum HttpExceptionNames {
+  BadRequest = 'BadRequestException',
+  Unauthorized = 'UnauthorizedException',
+  NotFound = 'NotFoundException',
+  Forbidden = 'ForbiddenException',
+  NotAcceptable = 'NotAcceptableException',
+  RequestTimeout = 'RequestTimeoutException',
+  Conflict = 'ConflictException',
+  Gone = 'GoneException',
+  HttpVersionNotSupported = 'HttpVersionNotSupportedException',
+  PayloadTooLarge = 'PayloadTooLargeException',
+  UnsupportedMediaType = 'UnsupportedMediaTypeException',
+  UnprocessableEntity = 'UnprocessableEntityException',
+  InternalServerError = 'InternalServerErrorException',
+  NotImplemented = 'NotImplementedException',
+  ImATeapot = 'ImATeapotException',
+  MethodNotAllowed = 'MethodNotAllowedException',
+  BadGateway = 'BadGatewayException',
+  ServiceUnavailable = 'ServiceUnavailableException',
+  GatewayTimeout = 'GatewayTimeoutException',
+  PreconditionFailed = 'PreconditionFailedException',
+  Validation = 'ValidationException', // ** custom validation exception **
+}
